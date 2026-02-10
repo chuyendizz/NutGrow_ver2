@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en-US" xmlns:th="www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Nutgrow - Đăng nhập</title>
+
+    <link rel="icon" type="image/x-icon" th:href="@{images/favicon.ico}"/>
+
+    <link th:href="@{/assets/vendor/bootstrap/bootstrap.min.css}" rel="stylesheet"/>
+
+    <link th:href="@{/assets/css/main.css}" rel="stylesheet"/>
+
+    <link th:href="@{/assets/css/font.css}" rel="stylesheet"/>
+</head>
+
+<style>
+    body { height: 95vh; padding-right: 45px; }
+    .left-content { min-width: 388px; }
+    .right-content { height: fit-content; min-width: 456px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1); }
+    .modal-dialog .form-control { border: solid 1px #ccc; background-color: #f5f6f7; }
+    .modal-dialog .form-control.is-invalid { border: solid 2px #e9573f !important; }
+    .error-area { min-height: 8px; }
+    .text-danger { font-size: 14px; }
+    .text-green-soft { color: #88E788; text-shadow: 0 2px 4px rgba(136, 231, 136, 0.4); }
+</style>
+
+<body class="bg-light">
+<div class="content h-100 d-flex align-items-center justify-content-center">
+    <div class="container mx-3" style="max-width: 1234px">
+        <div class="d-flex justify-content-between w-100 m-0 gap-5">
+            
+            <div>
+                <div class="left-content" style="padding: 68px 0 0 33px">
+                    <div class="navbar-brand site-title w-100 mb-0 text-green-soft" style="font-size: 56px">
+                        NutGrow
+                    </div>
+                    <div>
+                        <h1 class="intro-title marker">Thành công của bạn là nhiệm vụ của chúng tôi</h1>
+                        <p class="lead fw-normal mt-4">Nền tảng học tập tích hợp AI</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-content p-3 bg-white rounded">
+
+                <div th:if="${param.passwordChanged}" class="alert alert-success ms-3 me-3">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <span>Mật khẩu đã được đổi thành công!</span>
+                </div>
+
+                <div th:if="${param.logout}" class="alert alert-info ms-3 me-3">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <span>Bạn đã đăng xuất.</span>
+                </div>
+
+                <div class="alert alert-danger ms-3 me-3" th:if="${param.error != null}">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <span th:text="${session.SPRING_SECURITY_LAST_EXCEPTION != null ? session.SPRING_SECURITY_LAST_EXCEPTION.message : 'Sai email hoặc mật khẩu!'}"></span>
+                </div>
+
+                <div class="alert alert-danger ms-3 me-3" th:if="${mess != null}">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <span th:text="${mess}">Thông báo lỗi tùy chỉnh</span>
+                    <script>
+                        window.onload = function() {
+                            var myModal = new bootstrap.Modal(document.getElementById('registerModal'));
+                            myModal.show();
+                        };
+                    </script>
+                </div>
+
+                <form th:action="@{/login}" method="post" role="form" id="loginForm">
+                    <div class="form-group" style="margin-top: 3px">
+                        <div class="login-input-custom email-input">
+                            <label for="email"><span><i class="fas fa-envelope"></i></span></label>
+                            <input class="form-control" type="email" id="email" name="email"
+                                   autocomplete="email" placeholder="Email@example" required/>
+                        </div>
+                    </div>
+
+                    <div class="form-group my-2">
+                        <div class="login-input-custom password-input">
+                            <label for="loginPassword"><span><i class="fas fa-lock"></i></span></label>
+                            <input class="form-control" type="password" id="loginPassword" name="password"
+                                   placeholder="Mật khẩu" required/>
+                            <span class="btn-show-pass" onclick="togglePasswordVisibility('loginPassword')">
+                                <i id="loginPasswordIcon" class="fas fa-eye" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between w-100 px-3">
+                        <a class="nav-link p-0 d-flex align-items-center" th:href="@{/forgot-password}" style="cursor: pointer">
+                            <span>Quên mật khẩu?</span>
+                        </a>
+                        <button class="btn btn-sm px-3 rounded-3"
+                                style="background-color: #88E788; border-color: #88E788; color: #1f3d1f;"
+                                type="submit" id="loginBtn">
+                            ĐĂNG NHẬP
+                        </button>
+                    </div>
+                </form>
+
+                <div class="d-flex justify-content-center mt-3">
+                    <a class="btn btn-sm bg-light mt-1 px-3 glitter-button"
+                       style="border: solid 1px #eaeaeb" th:href="@{/oauth2/authorization/google}">
+                        <div class="d-flex align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="0.98em" height="1em" viewBox="0 0 256 262">
+                                <path fill="#4285f4" d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622l38.755 30.023l2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"/>
+                                <path fill="#34a853" d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055c-34.523 0-63.824-22.773-74.269-54.25l-1.531.13l-40.298 31.187l-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1"/>
+                                <path fill="#fbbc05" d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82c0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602z"/>
+                                <path fill="#eb4335" d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0C79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"/>
+                            </svg>
+                            <div class="px-2">Đăng nhập bằng Google</div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="divider my-1">or</div>
+
+                <div class="d-flex align-items-center px-3 gap-1">
+                    <span>Chưa có tài khoản?</span>
+                    <a class="btn btn-sm btn-secondary glitter-button mx-1 px-2"
+                       data-bs-toggle="modal" data-bs-target="#registerModal">
+                        ĐĂNG KÝ
+                        <span class="p-0" style="margin-left: 3px"><i class="fas fa-arrow-right"></i></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="registerModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 399px">
+        <div class="modal-content" style="padding: 8px">
+            <div class="modal-header p-1 pb-0 d-flex">
+                <div class="p-1">
+                    <h3 class="modal-title fs-3" style="line-height: 0.88">Đăng ký tài khoản</h3>
+                    <span class="fw-light">Nhanh gọn – dễ dàng</span>
+                </div>
+                <button type="button" class="btn-close position-relative" style="top: -30px; right: -3px" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+
+            <div class="modal-body p-1 pt-2">
+                <div class="alert alert-danger p-2 mb-2" th:if="${mess != null}" style="font-size: 13px;">
+                     <i class="fas fa-exclamation-circle"></i> <span th:text="${mess}"></span>
+                </div>
+
+                <form id="registerForm" class="d-flex flex-column gap-1" th:action="@{/register}" method="post" role="form" autocomplete="off">
+                    
+                    <div class="form-group" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Họ và tên đầy đủ của bạn">
+                        <input class="form-control fullNameInput" type="text" id="fullName" name="fullName"
+                               placeholder="Họ và tên" th:value="${nameInput}" required/>
+                        <div class="error-area text-danger px-1">
+                             <span id="fullNameError" class="d-none fullNameError">Họ tên không hợp lệ</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Địa chỉ email của bạn">
+                        <input class="form-control emailInput" type="email" id="emailReg" name="email"
+                               placeholder="Email@example.com" autocomplete="off" th:value="${emailInput}" required/>
+                        <div class="error-area text-danger px-1">
+                            <span id="emailError" class="d-none emailError">Email không hợp lệ</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Mật khẩu gồm 8–16 ký tự, có chữ hoa, chữ thường và số">
+                        <div class="register-input-custom password-input">
+                            <input class="form-control passwordInput" style="background-image: none" type="password"
+                                   id="regPassword" name="password" placeholder="Mật khẩu (VD: Nutgrow@2026)" required/>
+                            <span class="btn-show-pass" onclick="togglePasswordVisibility('regPassword')">
+                                <i id="regPasswordIcon" class="fas fa-eye" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                        <div class="error-area text-danger px-1">
+                            <span id="passwordError" class="d-none error-icon passwordError">Mật khẩu không đúng định dạng</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="register-input-custom password-input">
+                            <input class="form-control" style="background-image: none" type="password"
+                                   id="passwordConfirm" placeholder="Xác nhận mật khẩu" required/>
+                            <span class="btn-show-pass" onclick="togglePasswordVisibility('passwordConfirm')">
+                                <i id="passwordConfirmIcon" class="fas fa-eye" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                        <div class="error-area text-danger px-1">
+                            <span id="passwordConfirmError" class="d-none error-icon">Mật khẩu xác nhận không khớp</span>
+                        </div>
+                    </div>
+
+                    <p class="m-0 p-1" style="line-height: 1.23; font-size: 12px">
+                        Bằng cách nhấn Đăng ký, bạn đồng ý với Điều khoản và Chính sách của chúng tôi.
+                    </p>
+
+                    <div class="d-flex justify-content-center">
+                        <button id="signUpButton" type="button" onclick="handleSignUpClick()"
+                                class="btn btn-sm btn-primary" style="padding: 3px 23px">
+                            <span>ĐĂNG KÝ</span>
+                            <div class="spinner-border spinner-border-sm m-0 ms-1 d-none" role="status">
+                                <span class="visually-hidden">Đang xử lý...</span>
+                            </div>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 15px;">
+            <div class="modal-body p-4 text-center">
+                <div class="mb-3">
+                    <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                </div>
+                
+                <h4 class="fw-bold text-success mb-2">Đăng ký thành công!</h4>
+                <p class="text-muted mb-4">
+                    Tài khoản của bạn đã được tạo.<br>
+                    Vui lòng đăng nhập để bắt đầu trải nghiệm.
+                </p>
+
+                <button type="button" class="btn btn-success w-100 fw-bold py-2 rounded-pill shadow-sm" data-bs-dismiss="modal">
+                    ĐÃ HIỂU, ĐĂNG NHẬP NGAY
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://kit.fontawesome.com/b16b259998.js" crossorigin="anonymous"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+
+<script>
+    function togglePasswordVisibility(id) {
+        var input = document.getElementById(id);
+        var icon = document.getElementById(id + "Icon");
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            input.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
+    }
+    
+    // Hàm submit form đăng ký (kết hợp với logic có sẵn của bạn)
+    function handleSignUpClick() {
+        // Có thể thêm validate JS ở đây nếu cần
+        // Sau đó submit form
+        document.getElementById('registerForm').submit();
+    }
+</script>
+<script th:if="${registered}">
+    document.addEventListener('DOMContentLoaded', function() {
+        var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+        successModal.show();
+    });
+</script>
+</body>
+</html>

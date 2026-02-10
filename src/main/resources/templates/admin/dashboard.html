@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" th:fragment="layout" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Dashboard</title>
+</head>
+
+<body>
+
+    <th:block th:replace="layout/admin-layout :: layout">
+        <th:block th:fragment="pageContent">
+            <div class="xs-pd-20-10 pd-ltr-20">
+                <div class="title pb-20">
+                    <h2 class="h3 mb-0">Tổng quan hệ thống</h2>
+                </div>
+
+                <div class="row pb-10">
+                    <!-- Total Users -->
+                    <div class="col-xl-4 col-lg-4 col-md-6 mb-20">
+                        <div class="card-box height-100-p widget-style3">
+                            <div class="d-flex flex-wrap">
+                                <div class="widget-data">
+                                    <div class="weight-700 font-24 text-dark" th:text="${totalUsers}">0</div>
+                                    <div class="font-14 text-secondary weight-500">Người dùng</div>
+                                </div>
+                                <div class="widget-icon">
+                                    <div class="icon" data-color="#00eccf"><i class="fa fa-user" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Revenue -->
+                    <div class="col-xl-4 col-lg-4 col-md-6 mb-20">
+                        <div class="card-box height-100-p widget-style3">
+                            <div class="d-flex flex-wrap">
+                                <div class="widget-data">
+                                    <div class="weight-700 font-24 text-dark"
+                                        th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT') + ' đ'}">
+                                        0 đ</div>
+                                    <div class="font-14 text-secondary weight-500">Tổng doanh thu</div>
+                                </div>
+                                <div class="widget-icon">
+                                    <div class="icon" data-color="#ff5b5b"><i class="fa fa-money"
+                                            aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pending Orders -->
+                    <div class="col-xl-4 col-lg-4 col-md-6 mb-20">
+                        <div class="card-box height-100-p widget-style3">
+                            <div class="d-flex flex-wrap">
+                                <div class="widget-data">
+                                    <div class="weight-700 font-24 text-dark" th:text="${pendingCount}">0</div>
+                                    <div class="font-14 text-secondary weight-500">Đơn chờ duyệt</div>
+                                </div>
+                                <div class="widget-icon">
+                                    <div class="icon" data-color="#09cc06"><i class="icon-copy fa fa-shopping-cart"
+                                            aria-hidden="true"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Chart -->
+                    <div class="col-lg-8 col-md-12 mb-20">
+                        <div class="card-box height-100-p pd-20">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center pb-0 pb-md-3">
+                                <div class="h5 mb-md-0">Doanh thu tháng này</div>
+                            </div>
+                            <div id="chart-container" style="min-height: 350px;">
+                                <canvas id="dailyRevenueChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Orders -->
+                    <div class="col-lg-4 col-md-12 mb-20">
+                        <div class="card-box height-100-p pd-20">
+                            <div class="h5 mb-md-0">Đơn hàng mới</div>
+                            <div class="table-responsive mt-3">
+                                <table class="table table-striped text-center">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Gói</th>
+                                            <th>TT</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="order : ${recentOrders}">
+                                            <td th:text="${order.user.email}" class="text-left"
+                                                style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                user@test.com</td>
+                                            <td>
+                                                <span
+                                                    th:class="${order.packageType.name() == 'PREMIUM' ? 'badge badge-warning' : 'badge badge-success'}"
+                                                    th:text="${order.packageType}">PRO</span>
+                                            </td>
+                                            <td>
+                                                <span th:if="${order.orderStatus.name() == 'PENDING'}"
+                                                    class="badge badge-primary">Chờ</span>
+                                                <span th:if="${order.orderStatus.name() == 'APPROVED'}"
+                                                    class="badge badge-success">Duyệt</span>
+                                                <span th:if="${order.orderStatus.name() == 'REJECTED'}"
+                                                    class="badge badge-danger">Hủy</span>
+                                            </td>
+                                        </tr>
+                                        <tr th:if="${#lists.isEmpty(recentOrders)}">
+                                            <td colspan="3" class="text-center text-muted">Không có đơn hàng mới</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="text-center">
+                                    <a th:href="@{/admin/orders}" class="btn btn-sm btn-outline-primary">Xem tất cả</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+    </th:block>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Placeholder for chart functionality - similar to established existing code
+        // In a real scenario, this would be populated with data from the model
+        document.addEventListener("DOMContentLoaded", function () {
+            const ctx = document.getElementById('dailyRevenueChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['1', '5', '10', '15', '20', '25', '30'],
+                    datasets: [{
+                        label: 'Doanh thu (VND)',
+                        data: [0, 59000, 59000, 158000, 99000, 200000, 150000], // Mock data
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>

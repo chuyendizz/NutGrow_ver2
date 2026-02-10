@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" th:fragment="layout" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="utf-8"/>
+    <title>Dashboard</title>
+</head>
+<body>
+<th:block th:replace="layout/admin-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="pd-ltr-20 xs-pd-20-10">
+            <div class="min-height-200px">
+                <div class="page-header">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <div class="title">
+                                <h4>Quản lý người dùng</h4>
+                            </div>
+                            <nav aria-label="breadcrumb" role="navigation">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item">
+                                        <a th:href="@{/admin/dashboard}">Trang quản trị</a>
+                                    </li>
+                                    <li class="breadcrumb-item active" aria-current="page">
+                                        Quản lý người dùng
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pd-20 card-box mb-30">
+                    <div class="clearfix">
+                        <div class="pull-left">
+                            <h4 class="text-blue h4">Thêm người dùng</h4>
+                        </div>
+                    </div>
+                    <form th:action="@{/admin/user/save}" method="post" th:object="${user}" class="form" accept-charset="UTF-8">
+
+                        <!-- Hiển thị lỗi email nếu có -->
+                        <div th:if="${emailError}" class="text-danger">
+                            <p th:text="${emailError}"></p>
+                        </div>
+
+                        <!-- Họ tên -->
+                        <div class="form-group row">
+                            <label class="col-sm-12 col-md-2 col-form-label" for="fullName">Họ tên</label>
+                            <div class="col-sm-12 col-md-10">
+                                <input type="text" id="fullName" th:field="*{fullName}" class="form-control" placeholder="Nhập họ tên"/>
+                                <div th:if="${#fields.hasErrors('fullName')}" class="text-danger">
+                                    <ul>
+                                        <li th:each="err : ${#fields.errors('fullName')}" th:text="${err}"></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Email -->
+                        <div class="form-group row">
+                            <label class="col-sm-12 col-md-2 col-form-label" for="email">Email</label>
+                            <div class="col-sm-12 col-md-10">
+                                <input type="email" id="email" th:field="*{email}" class="form-control" placeholder="Nhập email"/>
+                                <div th:if="${#fields.hasErrors('email')}" class="text-danger">
+                                    <ul>
+                                        <li th:each="err : ${#fields.errors('email')}" th:text="${err}"></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mật khẩu -->
+                        <div class="form-group row">
+                            <label class="col-sm-12 col-md-2 col-form-label" for="password">Mật khẩu</label>
+                            <div class="col-sm-12 col-md-10">
+                                <input type="password" id="password" th:field="*{password}" class="form-control" placeholder="Nhập mật khẩu"/>
+                                <div th:if="${#fields.hasErrors('password')}" class="text-danger">
+                                    <ul>
+                                        <li th:each="err : ${#fields.errors('password')}" th:text="${err}"></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Trạng thái -->
+                        <div class="form-group row">
+                            <label class="col-sm-12 col-md-2 col-form-label" for="role">Quyền</label>
+                            <div class="col-sm-12 col-md-10">
+                                <select id="role" th:field="*{role}" class="custom-select col-12">
+                                    <option value="1">Nhân viên</option>
+                                    <option value="0">Quản trị viên</option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('role')}" class="text-danger">
+                                    <ul>
+                                        <li th:each="err : ${#fields.errors('role')}" th:text="${err}"></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Trạng thái -->
+                        <div class="form-group row">
+                            <label class="col-sm-12 col-md-2 col-form-label" for="status">Trạng thái</label>
+                            <div class="col-sm-12 col-md-10">
+                                <select id="status" th:field="*{status}" class="custom-select col-12">
+                                    <option value="1">Kích hoạt</option>
+                                    <option value="0">Khóa</option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('status')}" class="text-danger">
+                                    <ul>
+                                        <li th:each="err : ${#fields.errors('status')}" th:text="${err}"></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nút Submit -->
+                        <div class="form-group row">
+                            <div class="col-sm-12 col-md-10 offset-md-2">
+                                <button type="submit" class="btn btn-primary">Lưu</button>
+                                <a th:href="@{/admin/user}" class="btn btn-secondary">Hủy</a>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </th:block>
+</th:block>
+</body>
+</html>

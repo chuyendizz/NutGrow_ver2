@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thư viện tài liệu - Nutgrow</title>
+    
+    <link th:href="@{/assets/new-theme/css/bootstrap.min.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- 1. CORE THEME --- */
+        :root { --primary: #10b981; --primary-dark: #059669; --bg-body: #f3f4f6; --sidebar-width: 260px; }
+        body { background-color: var(--bg-body); font-family: 'Plus Jakarta Sans', sans-serif; background-image: radial-gradient(#e5e7eb 1px, transparent 1px); background-size: 24px 24px; color: #1f2937; }
+
+        /* --- 2. SIDEBAR --- */
+        .sidebar { width: var(--sidebar-width); height: 96vh; position: fixed; left: 12px; top: 12px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid white; border-radius: 24px; padding: 30px 20px; display: flex; flex-direction: column; z-index: 1000; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); }
+        .nav-item { display: flex; align-items: center; padding: 14px 18px; color: #64748b; text-decoration: none; border-radius: 16px; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem; transition: 0.3s; gap: 14px; }
+        .nav-item:hover { background: white; color: var(--primary); transform: translateX(5px); }
+        .nav-item.active { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; box-shadow: 0 8px 20px -4px rgba(16, 185, 129, 0.4); }
+        .nav-item.active i { color: white; }
+        .brand-logo { font-size: 1.5rem; font-weight: 800; color: #064e3b; text-decoration: none; margin-bottom: 40px; padding-left: 10px; display: flex; align-items: center; gap: 10px; }
+
+        /* --- 3. MAIN LIBRARY --- */
+        .main-content { margin-left: calc(var(--sidebar-width) + 24px); padding: 30px 40px; }
+        
+        .lib-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .search-box { position: relative; width: 350px; }
+        .search-box input { width: 100%; padding: 12px 20px 12px 45px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; transition: 0.3s; }
+        .search-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
+        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 30px; overflow-x: auto; padding-bottom: 5px; }
+        .filter-chip { padding: 8px 20px; background: white; border: 1px solid #e2e8f0; border-radius: 100px; font-size: 0.9rem; font-weight: 600; color: #64748b; cursor: pointer; transition: 0.2s; white-space: nowrap; }
+        .filter-chip:hover { background: #f8fafc; border-color: #cbd5e1; }
+        .filter-chip.active { background: #ecfdf5; color: #059669; border-color: #10b981; }
+
+        /* --- 4. DOCUMENT CARD --- */
+        .doc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; }
+        
+        .doc-card {
+            background: white; border-radius: 20px; padding: 20px;
+            border: 1px solid white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+            position: relative; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer; display: flex; flex-direction: column; height: 100%; text-decoration: none;
+        }
+        .doc-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08); border-color: var(--primary); }
+        
+        .doc-icon {
+            width: 50px; height: 50px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; margin-bottom: 15px;
+        }
+        .icon-pdf { background: #fef2f2; color: #ef4444; }
+        
+        .doc-title { font-weight: 700; font-size: 1rem; color: #1e293b; margin-bottom: 5px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 44px; }
+        .doc-meta { font-size: 0.8rem; color: #94a3b8; margin-top: auto; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        
+        /* Action Buttons trong Card */
+        .card-actions { display: flex; gap: 8px; margin-top: auto; }
+        .btn-card-action { flex: 1; border-radius: 8px; padding: 6px; font-size: 0.85rem; font-weight: 600; border: none; transition: 0.2s; }
+        .btn-study { background: #ecfdf5; color: #059669; }
+        .btn-study:hover { background: #10b981; color: white; }
+        .btn-download { background: #f1f5f9; color: #64748b; width: 40px; flex: none; }
+        .btn-download:hover { background: #e2e8f0; color: #1e293b; }
+
+        /* Empty State */
+        .empty-state { text-align: center; padding: 80px 0; grid-column: 1 / -1; }
+        .empty-icon { font-size: 4rem; color: #cbd5e1; margin-bottom: 20px; }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <a th:href="@{/dashboard}" class="brand-logo">
+            <img th:src="@{/assets/new-theme/images/linhvat.png}" alt="Logo" style="height: 40px;" onerror="this.style.display='none'"> 
+            Nutgrow
+        </a>
+        <div class="d-flex flex-column">
+            <a th:href="@{/dashboard}" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+            <a th:href="@{/library}" class="nav-item active"><i class="fas fa-book"></i> Thư viện</a>
+            <a th:href="@{/activity}" class="nav-item"><i class="fas fa-chart-line"></i> Hoạt động</a>
+            <a th:href="@{/pricing}" class="nav-item"><i class="fas fa-crown"></i> Nâng cấp</a>
+        </div>
+        
+        <div class="mt-auto">
+            <a th:href="@{/logout}" class="nav-item text-danger"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        
+        <div class="lib-header">
+            <div>
+                <h3 class="fw-bold mb-1">Thư viện của bạn</h3>
+                <p class="text-muted small mb-0">Quản lý và ôn tập lại các tài liệu đã tải lên.</p>
+            </div>
+            
+            <div class="d-flex gap-3">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Tìm kiếm tài liệu...">
+                </div>
+                <a th:href="@{/dashboard}" class="btn btn-success rounded-pill px-4 fw-bold d-flex align-items-center">
+                    <i class="fas fa-plus me-2"></i> Tải mới
+                </a>
+            </div>
+        </div>
+
+        <div class="filter-bar">
+            <div class="filter-chip active">Tất cả</div>
+            <div class="filter-chip">Gần đây</div>
+            <div class="filter-chip">Toán học</div>
+            <div class="filter-chip">Văn học</div>
+            <div class="filter-chip">Tiếng Anh</div>
+        </div>
+
+        <div class="doc-grid">
+
+            <div th:if="${documents == null or documents.isEmpty()}" class="empty-state">
+                <div class="empty-icon"><i class="fas fa-folder-open"></i></div>
+                <h5 class="fw-bold text-muted">Chưa có tài liệu nào</h5>
+                <p class="text-secondary mb-4">Hãy tải lên tài liệu đầu tiên để bắt đầu học tập.</p>
+                <a th:href="@{/dashboard}" class="btn btn-outline-success rounded-pill px-4 fw-bold">Tải tài liệu ngay</a>
+            </div>
+
+            <div th:each="doc : ${documents}" class="doc-card">
+                
+                <div class="doc-icon icon-pdf"><i class="fas fa-file-pdf"></i></div>
+                
+                <div class="doc-title" th:text="${doc.fileName}">Tên tài liệu mẫu.pdf</div>
+                
+                <div class="doc-meta">
+                    <span><i class="far fa-clock me-1"></i> Mới tải lên</span>
+                    <span>PDF</span>
+                </div>
+
+                <div class="card-actions">
+                    <button class="btn-card-action btn-study" onclick="window.location.href='/dashboard'">
+                        <i class="fas fa-book-open me-1"></i> Ôn tập
+                    </button>
+                    
+                    <a th:href="${doc.fileUrl}" target="_blank" class="btn-card-action btn-download d-flex align-items-center justify-content-center text-decoration-none">
+                        <i class="fas fa-download"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

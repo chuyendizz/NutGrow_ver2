@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nâng cấp Nutgrow - Đầu tư cho tri thức</title>
+
+    <link th:href="@{/assets/new-theme/css/bootstrap.min.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* --- CORE STYLES --- */
+        :root {
+            --primary: #10b981;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 96vh;
+            position: fixed;
+            left: 12px;
+            top: 12px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid white;
+            border-radius: 24px;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            color: #64748b;
+            text-decoration: none;
+            border-radius: 16px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            gap: 14px;
+            transition: 0.3s;
+        }
+
+        .nav-item:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .brand-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #064e3b;
+            text-decoration: none;
+            margin-bottom: 40px;
+            padding-left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* --- PRICING CONTENT --- */
+        .main-content {
+            margin-left: calc(var(--sidebar-width) + 24px);
+            padding: 40px 60px;
+        }
+
+        .pricing-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 50px auto;
+        }
+
+        .pricing-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 15px;
+        }
+
+        /* Grid Cards */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            align-items: center;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 32px;
+            padding: 40px;
+            border: 1px solid white;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05);
+            transition: 0.3s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.1);
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .plan-price {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .plan-period {
+            font-size: 1rem;
+            color: #94a3b8;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+            flex-grow: 1;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            color: #334155;
+        }
+
+        .feature-icon {
+            color: #10b981;
+            margin-top: 3px;
+        }
+
+        .feature-icon.disabled {
+            color: #cbd5e1;
+        }
+
+        .feature-text.disabled {
+            color: #94a3b8;
+            text-decoration: line-through;
+        }
+
+        .btn-plan {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+        }
+
+        /* Card Styles */
+        .card-free {
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-free {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .card-pro {
+            border: 2px solid #10b981;
+            background: #f0fdf4;
+        }
+
+        .btn-pro {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-pro:hover {
+            background: #059669;
+        }
+
+        .card-premium {
+            background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            transform: scale(1.05);
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-premium:hover {
+            transform: scale(1.08);
+        }
+
+        .card-premium .plan-name,
+        .card-premium .plan-price {
+            color: white;
+        }
+
+        .card-premium .feature-item {
+            color: #e2e8f0;
+        }
+
+        .card-premium .feature-icon {
+            color: #34d399;
+        }
+
+        .btn-premium {
+            background: linear-gradient(90deg, #34d399 0%, #10b981 100%);
+            color: #022c22;
+        }
+
+        .btn-premium:hover {
+            opacity: 0.9;
+        }
+
+        .badge-popular {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f59e0b;
+            color: white;
+            font-weight: 800;
+            font-size: 0.8rem;
+            padding: 6px 15px;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <a th:href="@{/dashboard}" class="brand-logo">
+            <img th:src="@{/assets/new-theme/images/linhvat.png}" alt="Logo" style="height: 40px;"
+                onerror="this.style.display='none'"> Nutgrow
+        </a>
+        <div class="d-flex flex-column">
+            <a th:href="@{/dashboard}" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+            <a th:href="@{/library}" class="nav-item"><i class="fas fa-book"></i> Thư viện</a>
+            <a th:href="@{/activity}" class="nav-item"><i class="fas fa-chart-line"></i> Hoạt động</a>
+            <a href="#" class="nav-item active"><i class="fas fa-crown"></i> Nâng cấp</a>
+        </div>
+        <div class="mt-auto">
+            <a th:href="@{/dashboard}" class="nav-item text-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="pricing-header">
+            <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill fw-bold mb-3">Đơn giản &
+                Minh bạch</span>
+            <h1 class="pricing-title">Bảng giá dịch vụ</h1>
+            <p class="text-muted">Chọn gói phù hợp để mở khóa sức mạnh AI cho việc học của bạn.</p>
+        </div>
+
+        <div class="pricing-grid">
+            <div class="pricing-card card-free">
+                <div class="plan-name"><i class="fas fa-seedling text-secondary"></i> Starter</div>
+                <div class="plan-price">0đ</div>
+                <div class="plan-period">/ trọn đời</div>
+                <ul class="feature-list">
+                    <li class="feature-item"><i class="fas fa-check-circle feature-icon"></i> 3 Tài liệu / tháng</li>
+                    <li class="feature-item"><i class="fas fa-check-circle feature-icon"></i> Tạo Quiz cơ bản</li>
+                    <li class="feature-item"><i class="fas fa-times-circle feature-icon disabled"></i> <span
+                            class="feature-text disabled">AI Voice Tutor</span></li>
+                </ul>
+                <a th:href="@{/dashboard}" class="btn-plan btn-free">Đang sử dụng</a>
+            </div>
+
+            <div class="pricing-card card-pro">
+                <div class="plan-name"><i class="fas fa-tree text-success"></i> Pro</div>
+                <div class="plan-price">59k</div>
+                <div class="plan-period">/ tháng</div>
+                <ul class="feature-list">
+                    <li class="feature-item"><i class="fas fa-check-circle feature-icon"></i> <strong>50 Tài liệu /
+                            tháng</strong></li>
+                    <li class="feature-item"><i class="fas fa-check-circle feature-icon"></i> <strong>Flashcard không
+                            giới hạn</strong></li>
+                    <li class="feature-item"><i class="fas fa-check-circle feature-icon"></i> Xuất PDF đề thi</li>
+                </ul>
+                <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn-plan btn-pro">Nâng cấp Pro</a>
+                <button sec:authorize="isAuthenticated()" class="btn-plan btn-pro" onclick="openPayment('Pro')">Nâng cấp
+                    Pro</button>
+            </div>
+
+            <div class="pricing-card card-premium">
+                <div class="badge-popular">Khuyên dùng</div>
+                <div class="plan-name"><i class="fas fa-crown text-warning"></i> Premium</div>
+                <div class="plan-price">99k</div>
+                <div class="plan-period">/ tháng</div>
+                <ul class="feature-list">
+                    <li class="feature-item"><i class="fas fa-check-circle feature-icon"></i> <strong>Tất cả tính năng
+                            Pro</strong></li>
+                    <li class="feature-item"><i class="fas fa-check-circle feature-icon"></i> <strong>Mở khóa AI Voice
+                            Tutor</strong></li>
+                    <li class="feature-item"><i class="fas fa-check-circle feature-icon"></i> Phân tích sâu GPT-4o</li>
+                    <li class="feature-item"><i class="fas fa-check-circle feature-icon"></i> Hỗ trợ ưu tiên</li>
+                </ul>
+                <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn-plan btn-premium">Trở thành
+                    Premium</a>
+                <button sec:authorize="isAuthenticated()" class="btn-plan btn-premium"
+                    onclick="openPayment('Premium')">Trở thành Premium</button>
+            </div>
+        </div>
+
+        <div class="text-center mt-5 text-muted small">
+            <p><i class="fas fa-lock me-1"></i> Thanh toán an toàn qua chuyển khoản ngân hàng</p>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalPayment" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 24px; overflow: hidden;">
+                <div class="modal-header border-0 text-white p-4"
+                    style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    <div>
+                        <h5 class="modal-title fw-bold fs-4 mb-1">Thanh toán</h5>
+                        <p class="mb-0 opacity-75 small">Quét mã để kích hoạt ngay</p>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <div class="mb-3">
+                        <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill fw-bold mb-2"
+                            id="pay-plan-name">Gói Pro</span>
+                        <h2 class="fw-bold text-dark" id="pay-amount">59.000đ</h2>
+                    </div>
+
+                    <div class="p-2 bg-white border rounded-3 shadow-sm d-inline-block mb-3">
+                        <img th:src="@{/assets/new-theme/images/my-qr.jpg}"
+                            onerror="this.src='https://via.placeholder.com/200?text=QR+CODE'" alt="QR Code"
+                            class="img-fluid rounded-2" style="width: 200px; height: 200px;">
+                    </div>
+
+                    <div class="bg-light p-3 rounded-3 text-start mb-3 small">
+                        <div class="d-flex justify-content-between mb-1"><span class="text-muted">Ngân hàng:</span><span
+                                class="fw-bold">MB Bank</span></div>
+                        <div class="d-flex justify-content-between mb-1"><span class="text-muted">Số TK:</span><span
+                                class="fw-bold text-success">0123 456 789</span></div>
+                        <div class="d-flex justify-content-between mb-1"><span class="text-muted">Chủ TK:</span><span
+                                class="fw-bold">DO VAN HUNG</span></div>
+                        <hr class="my-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted">Nội dung:</span>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fw-bold text-danger bg-danger bg-opacity-10 px-2 py-1 rounded"
+                                    id="pay-syntax">NUTGROW PRO USER123</span>
+                                <button class="btn btn-sm btn-link p-0 text-decoration-none" onclick="copySyntax()"><i
+                                        class="far fa-copy"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <form th:action="@{/payment/confirm}" method="post" id="paymentForm">
+                    <input type="hidden" name="package" id="hidden-pay-package">
+                    <input type="hidden" name="paymentProof" value="https://example.com/demo-proof.jpg">
+                    <!-- Placeholder for now -->
+                    <button type="button" class="btn btn-success w-100 fw-bold py-3 rounded-pill"
+                        onclick="confirmTransfer()">Đã chuyển khoản
+                        xong</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function openPayment(planType) {
+            const modal = new bootstrap.Modal(document.getElementById('modalPayment'));
+            const nameEl = document.getElementById('pay-plan-name');
+            const amountEl = document.getElementById('pay-amount');
+            const syntaxEl = document.getElementById('pay-syntax');
+
+            if (planType === 'Pro') {
+                nameEl.innerText = "Nutgrow Pro";
+                // 👇 SỬA Ở ĐÂY: Dùng text-white để chữ màu trắng nổi bật trên nền xanh
+                nameEl.className = "badge bg-success text-white px-3 py-2 rounded-pill fw-bold mb-2";
+                amountEl.innerText = "59.000đ";
+            } else {
+                nameEl.innerText = "Nutgrow Premium";
+                // 👇 SỬA Ở ĐÂY: Tương tự cho gói VIP (Vàng/Cam)
+                nameEl.className = "badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold mb-2";
+                amountEl.innerText = "99.000đ";
+            }
+            syntaxEl.innerText = `NUTGROW ${planType.toUpperCase()} USER123`;
+            document.getElementById('hidden-pay-package').value = planType;
+            modal.show();
+        }
+
+        function confirmTransfer() {
+            Swal.fire({
+                title: 'Đã tiếp nhận!',
+                text: 'Nutgrow đã tiếp nhận yêu cầu của bạn, chúng tôi sẽ kích hoạt tài khoản ngay khi xác nhận thành công.',
+                icon: 'success',
+                confirmButtonColor: '#10b981',
+                confirmButtonText: 'Đã hiểu'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('paymentForm').submit();
+                }
+            });
+        }
+
+        function copySyntax() {
+            const syntax = document.getElementById('pay-syntax').innerText;
+            navigator.clipboard.writeText(syntax).then(() => {
+                // Có thể dùng Toast của Bootstrap hoặc Swal nhỏ để báo copy thành công
+                // alert("Đã sao chép nội dung chuyển khoản!");
+                const tooltip = bootstrap.Tooltip.getInstance(document.querySelector('button[onclick="copySyntax()"]'));
+                // Simple feedback logic if needed
+            });
+        }
+    </script>
+</body>
+
+</html>

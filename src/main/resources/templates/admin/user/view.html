@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" th:fragment="layout" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8"/>
+    <title>Dashboard</title>
+    <style>
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 50px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+        }
+
+        input:checked + .slider {
+            background-color: #4CAF50;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(14px);
+        }
+
+                .table {
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .table th, .table td {
+            word-wrap: break-word;
+            white-space: nowrap;
+        }
+
+    </style>
+</head>
+<body>
+
+<th:block th:replace="layout/admin-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="pd-ltr-20 xs-pd-20-10">
+            <div class="min-height-200px">
+                <div class="page-header">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <div class="title">
+                                <h4>Quản lý người dùng</h4>
+                            </div>
+                            <nav aria-label="breadcrumb" role="navigation">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item">
+                                        <a th:href="@{/admin/dashboard}">Quản trị</a>
+                                    </li>
+                                    <li class="breadcrumb-item active" aria-current="page">
+                                        Quản lý người dùng
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div th:if="${param.add}" class="alert alert-success" role="alert">
+                    Thêm thành công!
+                </div>
+
+
+                <div th:if="${param.updateStatus}" class="alert alert-success" role="alert">
+                    Cập nhật trạng thái thành công!
+                </div>
+
+                <!-- Simple Datatable start -->
+                <div class="card-box mb-30">
+                    <div class="pd-20">
+                        <h4 class="text-blue h4">Quản lý người dùng</h4>
+                    </div>
+                    <div class="pb-20">
+
+                        <table class="data-table table stripe hover nowrap">
+                            <thead>
+                            <tr>
+                                <th class="table-plus datatable-nosort">ID</th>
+                                <th>Họ tên</th>
+                                <th>Email</th>
+                                <th>Quyền</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- Lặp qua danh sách người dùng -->
+                            <tr th:each="emp : ${users}">
+                                <td class="table-plus" th:text="${emp.id}"></td>
+
+                                <td th:text="${emp.fullName}"></td>
+                                <td th:text="${emp.email}"></td>
+
+                                <td th:text="${emp.role == 1 ? 'Khách hàng' : 'Quản trị viên'}"></td>
+
+
+                                <td>
+                                    <label class="switch">
+                                        <input type="checkbox" th:checked="${emp.status == 1}"
+                                               th:onclick="|toggleStatus(${emp.id}, ${emp.status})|">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </th:block>
+</th:block>
+
+
+<script>
+    $(document).ready(function() {
+    if ($.fn.dataTable.isDataTable('.data-table')) {
+        $('.data-table').DataTable().destroy();
+    }
+
+    $('.data-table').DataTable({
+        responsive: true,
+        autoWidth: false,
+    });
+});
+
+function toggleStatus(id, currentStatus) {
+        let newStatus = currentStatus === 1 ? 0 : 1;
+        window.location.href = '/admin/user/update-status/' + id + '/' + newStatus;
+}
+
+</script>
+</body>
+</html>

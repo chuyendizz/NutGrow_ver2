@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Quản lý Đơn hàng</title>
+</head>
+
+<body>
+
+    <th:block th:replace="layout/admin-layout :: layout">
+        <th:block th:fragment="pageContent">
+            <div class="pd-ltr-20 xs-pd-20-10">
+                <div class="min-height-200px">
+                    <div class="page-header">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-12">
+                                <div class="title">
+                                    <h4>Danh sách Đơn hàng Nâng cấp</h4>
+                                </div>
+                                <nav aria-label="breadcrumb" role="navigation">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Home</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">Đơn hàng</li>
+                                    </ol>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pd-20 card-box mb-30">
+                        <div class="clearfix mb-20">
+                            <div class="pull-left">
+                                <h4 class="text-blue h4">Tất cả đơn hàng</h4>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Người dùng</th>
+                                        <th scope="col">Gói</th>
+                                        <th scope="col">Số tiền</th>
+                                        <th scope="col">Bằng chứng</th>
+                                        <th scope="col">Trạng thái</th>
+                                        <th scope="col">Ngày tạo</th>
+                                        <th scope="col">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="order : ${orders}">
+                                        <th scope="row" th:text="${order.id}">1</th>
+                                        <td th:text="${order.user.email}">user@example.com</td>
+                                        <td>
+                                            <span
+                                                th:class="${order.packageType.name() == 'PREMIUM' ? 'badge badge-warning' : 'badge badge-success'}"
+                                                th:text="${order.packageType}">PRO</span>
+                                        </td>
+                                        <td th:text="${order.amount} + ' VND'">59000</td>
+                                        <td>
+                                            <a th:if="${order.paymentProofImage != null}"
+                                                th:href="${order.paymentProofImage}" target="_blank">Xem ảnh</a>
+                                            <span th:unless="${order.paymentProofImage != null}">Không có</span>
+                                        </td>
+                                        <td>
+                                            <span th:if="${order.orderStatus.name() == 'PENDING'}"
+                                                class="badge badge-primary">Chờ duyệt</span>
+                                            <span th:if="${order.orderStatus.name() == 'APPROVED'}"
+                                                class="badge badge-success">Đã duyệt</span>
+                                            <span th:if="${order.orderStatus.name() == 'REJECTED'}"
+                                                class="badge badge-danger">Từ chối</span>
+                                        </td>
+                                        <td th:text="${#temporals.format(order.createdAt, 'dd-MM-yyyy HH:mm')}"></td>
+                                        <td>
+                                            <div th:if="${order.orderStatus.name() == 'PENDING'}" class="btn-group"
+                                                role="group">
+                                                <form th:action="@{/admin/orders/approve}" method="post"
+                                                    style="display:inline;">
+                                                    <input type="hidden" name="id" th:value="${order.id}" />
+                                                    <button type="submit" class="btn btn-sm btn-success"
+                                                        onclick="return confirm('Bạn có chắc muốn duyệt?')">
+                                                        <i class="fa fa-check"></i> Duyệt
+                                                    </button>
+                                                </form>
+                                                <form th:action="@{/admin/orders/reject}" method="post"
+                                                    style="display:inline; margin-left: 5px;">
+                                                    <input type="hidden" name="id" th:value="${order.id}" />
+                                                    <button type="submit" class="btn btn-sm btn-danger"
+                                                        onclick="return confirm('Bạn có chắc muốn từ chối?')">
+                                                        <i class="fa fa-times"></i> Từ chối
+                                                    </button>
+                                                </form>
+                                            </div>
+                                            <span th:unless="${order.orderStatus.name() == 'PENDING'}">-</span>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(orders)}">
+                                        <td colspan="8" class="text-center">Chưa có đơn hàng nào.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+    </th:block>
+
+</body>
+
+</html>

@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Góc Học Tập - Nutgrow</title>
+
+    <link th:href="@{/assets/new-theme/css/bootstrap.min.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --bg-body: #f8fafc;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* --- STUDY SIDEBAR --- */
+        .study-sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            z-index: 10;
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.02);
+        }
+
+        .brand-logo {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #064e3b;
+            text-decoration: none;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            font-weight: 700;
+            margin-bottom: 12px;
+            margin-top: 20px;
+        }
+
+        .study-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .study-nav-item:hover {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .study-nav-item.active {
+            background: #ecfdf5;
+            color: var(--primary-dark);
+        }
+
+        .study-nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* --- MAIN CONTENT AREA --- */
+        .study-main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: #f8fafc;
+            position: relative;
+        }
+
+        /* Top Bar within Study Area */
+        .study-topbar {
+            height: 70px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+
+
+        /* Content Canvas */
+        .study-canvas {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* --- SHARED CARDS & COMPONENTS --- */
+        .content-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+            min-height: 400px;
+        }
+
+        /* UPLOAD STATE */
+        .upload-zone {
+            border: 2px dashed #cbd5e1;
+            border-radius: 20px;
+            padding: 60px;
+            text-align: center;
+            transition: 0.2s;
+            cursor: pointer;
+            background: #f8fafc;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: #f0fdf4;
+        }
+
+        /* MODES GRID */
+        .mode-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .mode-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .mode-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        /* QUIZ STYLES */
+        .quiz-option {
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+
+        .quiz-option:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .quiz-option.selected {
+            border-color: var(--primary);
+            background: #ecfdf5;
+            color: var(--primary-dark);
+        }
+
+        /* FLASHCARD STYLES */
+        .flashcard-container {
+            perspective: 1000px;
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            margin: 0 auto;
+            cursor: pointer;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px -10px rgba(0, 0, 0, 0.1);
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .fc-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .fc-front {
+            background: white;
+            color: #1e293b;
+        }
+
+        .fc-back {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        /* ANIMATIONS */
+        .fade-enter {
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="study-sidebar">
+        <a th:href="@{/dashboard}" class="brand-logo">
+            <img th:src="@{/assets/new-theme/images/linhvat.png}" alt="Logo" style="height: 32px;">
+            Nutgrow Study
+        </a>
+
+        <div class="nav-section-title">Nội dung</div>
+        <div class="study-nav-item active" onclick="switchView('upload')" id="nav-upload">
+            <i class="fas fa-cloud-upload-alt"></i> Tải tài liệu
+        </div>
+        <div class="study-nav-item" id="nav-summary" style="display: none;" onclick="switchView('summary')">
+            <i class="fas fa-file-alt"></i> Tóm tắt tài liệu
+        </div>
+        <div class="study-nav-item" id="nav-modes" style="opacity: 0.5; pointer-events: none;"
+            onclick="switchView('modes')">
+            <i class="fas fa-layer-group"></i> Chọn chế độ
+        </div>
+
+        <div class="nav-section-title">Công cụ</div>
+        <div class="study-nav-item" onclick="startMode('quiz')" id="nav-quiz" style="display: none;">
+            <i class="fas fa-check-circle"></i> Trắc nghiệm
+        </div>
+        <div class="study-nav-item" onclick="startMode('flashcard')" id="nav-flashcard" style="display: none;">
+            <i class="fas fa-clone"></i> Flashcards
+        </div>
+        <div class="study-nav-item" onclick="startMode('voice')" id="nav-voice" style="display: none;">
+            <i class="fas fa-microphone"></i> Voice Tutor
+        </div>
+
+        <div class="mt-auto">
+            <a th:href="@{/dashboard}" class="study-nav-item text-danger">
+                <i class="fas fa-sign-out-alt"></i> Thoát về Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN AREA -->
+    <div class="study-main">
+
+        <!-- Top Bar -->
+        <div class="study-topbar">
+            <div>
+                <h5 class="fw-bold mb-0" id="page-title">Tải tài liệu mới</h5>
+                <p class="text-muted small mb-0" id="page-desc">Bắt đầu bằng việc upload file PDF của bạn.</p>
+            </div>
+            <div>
+                <button class="btn btn-light rounded-pill px-3 fw-bold border" onclick="toggleAnalysis()"
+                    id="btn-ai-analysis" style="display: none;">
+                    <i class="fas fa-magic me-2 text-primary"></i> Phân tích AI
+                </button>
+            </div>
+        </div>
+
+        <!-- Canvas -->
+        <div class="study-canvas">
+
+            <!-- VIEW: UPLOAD -->
+            <div id="view-upload" class="fade-enter h-100 d-flex flex-column align-items-center justify-content-center">
+                <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+                    <div class="mb-4">
+                        <i class="fas fa-cloud-upload-alt text-primary" style="font-size: 4rem;"></i>
+                    </div>
+                    <h3 class="fw-bold mb-2">Kéo thả hoặc chọn file PDF</h3>
+                    <p class="text-muted mb-4">Hỗ trợ PDF tối đa 20MB. AI sẽ xử lý trong giây lát.</p>
+                    <button class="btn btn-primary btn-lg rounded-pill px-5 fw-bold">Chọn File</button>
+                    <input type="file" hidden id="fileInput" onchange="handleFileUpload(this)">
+                </div>
+                <!-- Loading State -->
+                <div id="upload-loading" class="mt-5 text-center d-none">
+                    <div class="spinner-border text-primary mb-3" role="status"></div>
+                    <h5 class="fw-bold text-dark">Đang đọc tài liệu...</h5>
+                    <p class="text-muted">Vui lòng đợi 1 chút, AI đang phân tích nội dung.</p>
+                </div>
+            </div>
+
+            <!-- VIEW: SUMMARY -->
+            <div id="view-summary" class="fade-enter d-none" style="padding: 40px; overflow-y: auto;">
+                <div class="content-card" style="max-width: 900px; margin: 0 auto;">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <h3 class="fw-bold mb-2"><i class="fas fa-sparkles text-warning me-2"></i>Tóm tắt tài liệu
+                            </h3>
+                            <p class="text-muted mb-0">AI đã phân tích và tóm gọn nội dung chính cho bạn.</p>
+                        </div>
+                        <button class="btn btn-light rounded-pill px-3" onclick="switchView('modes')">
+                            <i class="fas fa-arrow-left me-2"></i>Quay lại
+                        </button>
+                    </div>
+
+                    <!-- Summary Content -->
+                    <div id="summary-content" class="p-4 bg-light rounded-4 mb-4"
+                        style="border-left: 4px solid var(--primary);">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                            <span class="text-muted">Đang tải tóm tắt...</span>
+                        </div>
+                    </div>
+
+                    <!-- Key Points (if available) -->
+                    <div id="summary-parts" class="d-none">
+                        <h5 class="fw-bold mb-3"><i class="fas fa-list-ul text-primary me-2"></i>Các điểm chính</h5>
+                        <div id="parts-list" class="d-flex flex-column gap-3">
+                            <!-- Dynamic parts will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: MODE SELECTION -->
+            <div id="view-modes" class="fade-enter d-none h-100 flex-column justify-content-center">
+                <div class="text-center mb-5">
+                    <h2 class="fw-bold display-6">Bạn muốn học theo cách nào?</h2>
+                    <p class="text-muted fs-5">Chọn chế độ phù hợp nhất với mục tiêu của bạn.</p>
+                </div>
+                <div class="mode-grid">
+                    <div class="mode-card" onclick="startMode('flashcard')">
+                        <i class="fas fa-clone mode-icon text-warning"></i>
+                        <h4 class="fw-bold">Flashcards</h4>
+                        <p class="text-muted mb-0">Lật thẻ để ghi nhớ từ vựng và khái niệm quan trọng.</p>
+                    </div>
+                    <div class="mode-card" onclick="startMode('quiz')">
+                        <i class="fas fa-check-circle mode-icon text-danger"></i>
+                        <h4 class="fw-bold">Quiz Trắc Nghiệm</h4>
+                        <p class="text-muted mb-0">Kiểm tra kiến thức với 10 câu hỏi ngẫu nhiên.</p>
+                    </div>
+                    <div class="mode-card" onclick="startMode('voice')">
+                        <i class="fas fa-microphone mode-icon text-info"></i>
+                        <h4 class="fw-bold">Voice Tutor</h4>
+                        <p class="text-muted mb-0">Luyện nói và hỏi đáp trực tiếp với AI.</p>
+                    </div>
+                    <div class="mode-card" onclick="startMode('essay')">
+                        <i class="fas fa-pen-nib mode-icon text-primary"></i>
+                        <h4 class="fw-bold">Luyện Viết</h4>
+                        <p class="text-muted mb-0">Viết bài luận ngắn và nhận phản hồi chi tiết.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: QUIZ -->
+            <div id="view-quiz" class="fade-enter d-none">
+                <div class="content-card">
+                    <div id="quiz-content">
+                        <!-- Dynamic Quiz Content -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: FLASHCARD -->
+            <div id="view-flashcard" class="fade-enter d-none h-100 flex-column justify-content-center">
+                <div class="flashcard-container" onclick="flipCard()">
+                    <div class="flashcard">
+                        <div class="fc-face fc-front">
+                            <div class="mb-4 text-warning opacity-50"><i class="fas fa-lightbulb fa-3x"></i></div>
+                            <h3 id="fc-front-content" class="px-3">Đang tải...</h3>
+                            <p class="text-muted mt-3 small"><i class="fas fa-hand-pointer me-1"></i> Chạm để lật</p>
+                        </div>
+                        <div class="fc-face fc-back">
+                            <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                                <p id="fc-back-content" class="px-3" style="font-size: 1.2rem;">Nội dung giải thích.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-5 d-flex justify-content-center gap-3">
+                    <button class="btn btn-light rounded-circle shadow-sm" style="width: 50px; height: 50px;"
+                        onclick="prevCard()"><i class="fas fa-arrow-left"></i></button>
+                    <span class="d-flex align-items-center fw-bold text-muted" id="fc-progress">1 / 10</span>
+                    <button class="btn btn-light rounded-circle shadow-sm" style="width: 50px; height: 50px;"
+                        onclick="nextCard()"><i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- VIEW: VOICE -->
+            <div id="view-voice" class="fade-enter d-none h-100 flex-column justify-content-center align-items-center">
+                <div class="content-card text-center" style="max-width: 600px;">
+                    <button class="btn btn-light rounded-circle shadow-sm position-absolute top-0 start-0 m-3"
+                        style="width: 40px; height: 40px; z-index: 10;" onclick="switchView('modes')">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+
+                    <div class="mb-4">
+                        <div id="voice-avatar"
+                            class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center"
+                            style="width: 100px; height: 100px; transition: all 0.3s;">
+                            <i class="fas fa-microphone fa-3x text-primary" id="mic-icon"></i>
+                        </div>
+                    </div>
+
+                    <h3 class="fw-bold mb-3" id="voice-status-text">Sẵn sàng luyện nói</h3>
+                    <p class="text-muted mb-4">AI Tutor sẽ giúp bạn luyện tập và trả lời câu hỏi về tài liệu.</p>
+
+                    <div id="transcript-box" class="text-start p-3 bg-light rounded-3 mb-4 d-none"
+                        style="max-height: 200px; overflow-y: auto; font-size: 0.9rem;">
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-3">
+                        <button id="startTutor" class="btn btn-primary rounded-pill px-4 py-2 shadow-sm">
+                            <i class="fas fa-play me-2"></i> Bắt đầu
+                        </button>
+                        <button id="stopTutor" class="btn btn-danger rounded-pill px-4 py-2 shadow-sm d-none">
+                            <i class="fas fa-stop me-2"></i> Dừng lại
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: ESSAY -->
+            <div id="view-essay" class="fade-enter d-none h-100 overflow-hidden flex-column">
+                <div class="d-flex justify-content-between align-items-center mb-4 px-2">
+                    <button class="btn btn-light rounded-circle shadow-sm"
+                        style="width:40px; height:40px; border: 1px solid #e2e8f0;" onclick="switchView('modes')">
+                        <i class="fas fa-arrow-left text-secondary"></i>
+                    </button>
+                    <h4 class="fw-bold m-0 text-dark">Luyện Viết</h4>
+                    <div style="width:40px;"></div>
+                </div>
+
+                <div class="row justify-content-center h-100 overflow-auto pb-5">
+                    <div class="col-lg-8">
+                        <!-- Question Card -->
+                        <div class="card border-0 shadow-sm mb-4"
+                            style="background-color: #fef9c3; border-radius: 20px;">
+                            <div class="card-body p-4 p-md-5">
+                                <div class="text-center mb-3">
+                                    <span
+                                        class="badge bg-white text-dark px-3 py-2 rounded-pill fw-bold text-uppercase shadow-sm">
+                                        <i class="fas fa-question-circle me-2 text-primary"></i> Đề bài
+                                    </span>
+                                </div>
+                                <h4 class="fw-bold text-dark mb-0 text-center" id="essay-question-text"
+                                    style="line-height: 1.6;">
+                                    Đang tạo đề bài...
+                                </h4>
+                            </div>
+                        </div>
+
+                        <!-- Answer Input -->
+                        <div class="mb-4">
+                            <textarea id="essay-answer-input" class="form-control p-4 rounded-4 shadow-sm border-0"
+                                rows="8"
+                                placeholder="Nhập câu trả lời của bạn tại đây... (Cố gắng viết chi tiết để được điểm cao)"
+                                style="font-size: 1.1rem; resize: none; background: #f8fafc;"></textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center mb-5">
+                            <button id="btn-submit-essay" onclick="submitEssay()"
+                                class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow hover-scale">
+                                <i class="fas fa-paper-plane me-2"></i> Chấm điểm ngay
+                            </button>
+                        </div>
+
+                        <!-- Result Area -->
+                        <div id="essay-result-area" class="d-none animate__animated animate__fadeInUp mb-5">
+                            <div class="card border-0 shadow rounded-4 overflow-hidden">
+                                <div
+                                    class="card-header bg-white border-0 p-4 pb-0 d-flex justify-content-between align-items-center">
+                                    <h5 class="fw-bold mb-0">Kết quả đánh giá</h5>
+                                    <span class="badge bg-warning text-dark fs-6 px-3 py-2 rounded-pill"
+                                        id="essay-score-badge">?/10</span>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="mb-3">
+                                        <label class="fw-bold text-success mb-1"><i
+                                                class="fas fa-comment-dots me-2"></i>Nhận xét:</label>
+                                        <p class="text-muted" id="essay-feedback">...</p>
+                                    </div>
+                                    <div class="p-3 bg-light rounded-3 border border-dashed">
+                                        <label class="fw-bold text-primary mb-1"><i
+                                                class="fas fa-lightbulb me-2"></i>Gợi ý:</label>
+                                        <p class="mb-0 small text-secondary" id="essay-suggestion">...</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button onclick="loadEssay()" class="btn btn-outline-secondary rounded-pill px-4">Làm đề
+                                    khác</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // --- DATA SYSTEM ---
+        let currentQuizData = [];
+        let currentFlashcards = [];
+        let currentCardIndex = 0;
+        let currentEssayQuestion = "";
+        let uploadedDocumentContext = ""; // For Voice Tutor
+
+        // --- NAVIGATION ---
+        function switchView(viewName) {
+            document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('d-none'));
+            document.querySelectorAll('.study-nav-item').forEach(el => el.classList.remove('active'));
+
+            const target = document.getElementById(`view-${viewName}`);
+            if (target) target.classList.remove('d-none');
+
+            const navItem = document.getElementById(`nav-${viewName}`);
+            if (navItem) navItem.classList.add('active');
+
+            updateHeader(viewName);
+        }
+
+        function updateHeader(viewName) {
+            const titleEl = document.getElementById('page-title');
+            const descEl = document.getElementById('page-desc');
+            const aiBtn = document.getElementById('btn-ai-analysis');
+
+            const headers = {
+                'upload': { title: "Tải tài liệu mới", desc: "Bắt đầu hành trình học tập bằng việc upload file PDF.", ai: 'none' },
+                'summary': { title: "Tóm tắt tài liệu", desc: "AI đã phân tích và tóm gọn nội dung chính.", ai: 'none' },
+                'modes': { title: "Trung tâm Học tập", desc: "Chọn phương pháp học phù hợp với tài liệu của bạn.", ai: 'block' },
+                'quiz': { title: "Quiz Trắc Nghiệm", desc: "Kiểm tra lại kiến thức vừa học.", ai: 'none' },
+                'flashcard': { title: "Flashcards", desc: "Lật thẻ để ghi nhớ.", ai: 'none' },
+                'voice': { title: "Voice Tutor", desc: "Luyện nói cùng AI.", ai: 'none' },
+                'essay': { title: "Luyện Viết", desc: "Viết luận và chấm điểm AI.", ai: 'none' }
+            };
+
+            if (headers[viewName]) {
+                titleEl.textContent = headers[viewName].title;
+                descEl.textContent = headers[viewName].desc;
+                if (aiBtn) aiBtn.style.display = headers[viewName].ai;
+            }
+        }
+
+        function startMode(mode) {
+            switchView(mode);
+            if (mode === 'quiz') loadQuiz();
+            if (mode === 'flashcard') loadFlashcards();
+            if (mode === 'essay') loadEssay();
+        }
+
+        // --- UPLOAD HANDLER ---
+        async function handleFileUpload(input) {
+            if (!input.files || !input.files[0]) return;
+
+            const file = input.files[0];
+            document.querySelector('.upload-zone').classList.add('d-none');
+            const loadingEl = document.getElementById('upload-loading');
+            loadingEl.classList.remove('d-none');
+
+            // Update loading text
+            const statusText = document.createElement('div');
+            statusText.className = 'mt-3 text-muted';
+            statusText.textContent = "Đang tải lên...";
+            loadingEl.appendChild(statusText);
+
+            try {
+                // 1. Upload File
+                const formData = new FormData();
+                formData.append("file", file);
+
+                const uploadRes = await fetch('/api/study/upload', { method: 'POST', body: formData });
+                if (!uploadRes.ok) throw new Error("Lỗi upload file");
+                const uploadData = await uploadRes.json();
+
+                // 2. Analyze
+                statusText.textContent = "AI đang đọc hiểu tài liệu...";
+                const analyzeRes = await fetch('/api/study/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fileId: uploadData.fileId })
+                });
+
+                if (!analyzeRes.ok) throw new Error("Lỗi phân tích AI");
+                const result = await analyzeRes.json();
+
+                // Store context for Vapi
+                if (result.context) {
+                    uploadedDocumentContext = result.context;
+                    console.log("Context loaded for Voice Tutor:", uploadedDocumentContext.length, "chars");
+                }
+
+                // Store summary data
+                window.currentSummary = result.summary;
+                window.currentParts = result.parts;
+
+                // 3. Complete
+                // Unlock Nav & Show Modes
+                document.getElementById('nav-modes').style.opacity = '1';
+                document.getElementById('nav-modes').style.pointerEvents = 'auto';
+                document.getElementById('nav-summary').style.display = 'flex';
+                document.getElementById('nav-quiz').style.display = 'flex';
+                document.getElementById('nav-flashcard').style.display = 'flex';
+                document.getElementById('nav-voice').style.display = 'flex';
+
+                // Load summary immediately
+                loadSummary();
+                switchView('summary');
+
+            } catch (error) {
+                console.error(error);
+                alert("Đã có lỗi xảy ra: " + error.message);
+                // Reset UI
+                document.querySelector('.upload-zone').classList.remove('d-none');
+                loadingEl.classList.add('d-none');
+                statusText.remove();
+                input.value = ''; // Reset input
+            }
+        }
+
+        // --- SUMMARY DISPLAY ---
+        function loadSummary() {
+            const summaryContent = document.getElementById('summary-content');
+            const summaryParts = document.getElementById('summary-parts');
+            const partsList = document.getElementById('parts-list');
+
+            if (!window.currentSummary) {
+                summaryContent.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-exclamation-circle fa-2x mb-3"></i>
+                        <p>Chưa có dữ liệu tóm tắt. Vui lòng tải tài liệu mới.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Display summary
+            summaryContent.innerHTML = `
+                <div class="d-flex align-items-start gap-3">
+                    <i class="fas fa-quote-left text-primary mt-1" style="font-size: 1.5rem; opacity: 0.3;"></i>
+                    <p class="mb-0 lh-lg" style="font-size: 1.05rem; color: #334155;">${window.currentSummary}</p>
+                </div>
+            `;
+
+            // Display parts if available
+            if (window.currentParts && window.currentParts.length > 0) {
+                console.log('Rendering parts:', window.currentParts);
+                summaryParts.classList.remove('d-none');
+                partsList.innerHTML = window.currentParts.map((part, index) => {
+                    // Handle both object {title, content} and string formats
+                    let title, content;
+                    if (typeof part === 'string') {
+                        title = `Điểm chính ${index + 1}`;
+                        content = part;
+                    } else if (part && typeof part === 'object') {
+                        title = part.title || `Điểm chính ${index + 1}`;
+                        content = part.content || JSON.stringify(part);
+                    } else {
+                        title = `Điểm chính ${index + 1}`;
+                        content = 'Không có nội dung';
+                    }
+                    console.log(`Part ${index}:`, { title, content, original: part });
+                    return `
+                    <div class="p-4 bg-white rounded-3 border border-2 shadow-sm">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <div class="flex-shrink-0 bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 32px; height: 32px;">
+                                <span class="fw-bold text-primary small">${index + 1}</span>
+                            </div>
+                            <h6 class="fw-bold mb-0 text-dark">${title}</h6>
+                        </div>
+                        <p class="mb-0 ms-5 text-muted" style="color: #475569;">${content}</p>
+                    </div>
+                `;
+                }).join('');
+            } else {
+                summaryParts.classList.add('d-none');
+            }
+        }
+
+        // --- QUIZ LOGIC ---
+        async function loadQuiz() {
+            const container = document.getElementById('quiz-content');
+            container.innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary mb-3"></div>
+                    <p>AI đang soạn câu hỏi từ tài liệu...</p>
+                </div>
+            `;
+
+            try {
+                const res = await fetch('/api/study/quiz', { method: 'POST' });
+                if (!res.ok) throw new Error("Lỗi tạo Quiz");
+                const data = await res.json();
+
+                currentQuizData = data.questions;
+                if (!currentQuizData || currentQuizData.length === 0) {
+                    container.innerHTML = `<div class="text-center text-muted py-5">Không tạo được câu hỏi nào. Hãy thử tài liệu khác.</div>`;
+                    return;
+                }
+                renderQuiz();
+            } catch (error) {
+                container.innerHTML = `<div class="text-center text-danger py-5">Lỗi: ${error.message}</div>`;
+            }
+        }
+
+        function renderQuiz() {
+            let html = '';
+            currentQuizData.forEach((q, index) => {
+                html += `
+                    <div class="mb-5 quiz-item" id="q-card-${index}">
+                        <h5 class="fw-bold mb-3"><span class="text-primary me-2">Câu ${index + 1}:</span> ${q.question}</h5>
+                        <div class="d-grid gap-2">
+                `;
+                q.options.forEach((opt, optIdx) => {
+                    html += `
+                        <div class="quiz-option" onclick="selectQuizOption(${index}, ${optIdx})">
+                            ${String.fromCharCode(65 + optIdx)}. ${opt}
+                        </div>
+                    `;
+                });
+                html += `</div><div class="mt-3 feedback d-none fw-bold"></div></div><hr class="text-muted opacity-25 my-4">`;
+            });
+
+            html += `<div class="text-center pb-5"><button class="btn btn-primary btn-lg rounded-pill px-5" onclick="submitQuiz()">Nộp bài</button></div>`;
+            document.getElementById('quiz-content').innerHTML = html;
+        }
+
+        function selectQuizOption(qIdx, oIdx) {
+            const card = document.getElementById(`q-card-${qIdx}`);
+            card.querySelectorAll('.quiz-option').forEach(el => el.classList.remove('selected'));
+            card.querySelectorAll('.quiz-option')[oIdx].classList.add('selected');
+            currentQuizData[qIdx].userAnswer = oIdx;
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            currentQuizData.forEach((q, idx) => {
+                const card = document.getElementById(`q-card-${idx}`);
+                const feedback = card.querySelector('.feedback');
+                const selected = card.querySelector('.quiz-option.selected');
+
+                feedback.classList.remove('d-none');
+
+                // Highlight correct/wrong
+                card.querySelectorAll('.quiz-option')[q.answer].classList.add('correct');
+
+                if (selected && currentQuizData[idx].userAnswer === q.answer) {
+                    score++;
+                    feedback.textContent = "Chính xác! 🎉";
+                    feedback.className = "mt-2 feedback fw-bold text-success";
+                } else {
+                    if (selected) selected.classList.add('wrong');
+                    feedback.textContent = `Sai rồi. Đáp án đúng là: ${q.options[q.answer]}`;
+                    feedback.className = "mt-2 feedback fw-bold text-danger";
+                }
+            });
+            // Scroll to top
+            document.querySelector('.study-canvas').scrollTop = 0;
+            // alert(`Bạn làm đúng ${score}/${currentQuizData.length} câu!`);
+
+            // Show result nicely
+            const resultDiv = document.createElement('div');
+            resultDiv.className = "alert alert-success text-center fw-bold mb-4";
+            resultDiv.innerHTML = `<h3>Kết quả: ${score} / ${currentQuizData.length} câu đúng! 🎉</h3>`;
+            document.getElementById('quiz-content').prepend(resultDiv);
+
+            // Disable submit button
+            document.querySelector('button[onclick="submitQuiz()"]').disabled = true;
+        }
+
+        // --- FLASHCARD LOGIC ---
+        async function loadFlashcards() {
+            const container = document.getElementById('view-flashcard');
+            // Show loading state on card if needed, or just let it update
+            document.getElementById('fc-front-content').textContent = "Đang tải...";
+            document.getElementById('fc-back-content').textContent = "...";
+
+            try {
+                // Payload needs documentText but controller uses this.text if null. 
+                // We'll pass empty object for now as controller handles it.
+                const res = await fetch('/api/study/flashcards', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+
+                if (!res.ok) throw new Error("Lỗi tạo Flashcards");
+                const data = await res.json();
+
+                currentFlashcards = data.cards || [];
+                if (currentFlashcards.length === 0) {
+                    alert("Không tạo được flashcards. Nội dung quá ngắn?");
+                    return;
+                }
+
+                currentCardIndex = 0;
+                updateFlashcardUI();
+            } catch (error) {
+                console.error(error);
+                document.getElementById('fc-front-content').textContent = "Lỗi: " + error.message;
+            }
+        }
+
+        function updateFlashcardUI() {
+            if (currentFlashcards.length === 0) return;
+            const card = currentFlashcards[currentCardIndex];
+            document.getElementById('fc-front-content').textContent = card.front;
+            document.getElementById('fc-back-content').textContent = card.back;
+            document.getElementById('fc-progress').textContent = `${currentCardIndex + 1} / ${currentFlashcards.length}`;
+            document.querySelector('.flashcard').classList.remove('flipped');
+        }
+
+        function flipCard() {
+            document.querySelector('.flashcard').classList.toggle('flipped');
+        }
+
+        function nextCard() {
+            if (currentCardIndex < currentFlashcards.length - 1) {
+                currentCardIndex++;
+                updateFlashcardUI();
+            }
+        }
+
+        function prevCard() {
+            if (currentCardIndex > 0) {
+                currentCardIndex--;
+                updateFlashcardUI();
+            }
+        }
+
+        async function saveToLibrary() {
+            try {
+                const res = await fetch('/api/study/save', { method: 'POST' });
+                if (res.ok) {
+                    alert("Đã lưu tài liệu vào thư viện!");
+                } else {
+                    alert("Lỗi khi lưu.");
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Lỗi kết nối.");
+            }
+        }
+
+        // --- ESSAY LOGIC ---
+        async function loadEssay() {
+            const questionEl = document.getElementById('essay-question-text');
+            questionEl.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Đang đọc tài liệu và tạo đề bài...';
+            document.getElementById('essay-answer-input').value = "";
+            document.getElementById('essay-result-area').classList.add('d-none');
+            document.getElementById('btn-submit-essay').disabled = false;
+
+            try {
+                const response = await fetch('/api/study/essay/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+                if (!response.ok) throw new Error("Lỗi API");
+                const data = await response.json();
+                currentEssayQuestion = data.question;
+                questionEl.innerText = currentEssayQuestion;
+            } catch (e) {
+                questionEl.innerText = "Lỗi: " + e.message;
+            }
+        }
+
+        async function submitEssay() {
+            const answer = document.getElementById('essay-answer-input').value.trim();
+            if (answer.length < 10) { alert("Bài làm quá ngắn!"); return; }
+
+            const btn = document.getElementById('btn-submit-essay');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Đang chấm...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/study/essay/grade', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: currentEssayQuestion, answer: answer })
+                });
+                if (!response.ok) throw new Error("Lỗi chấm điểm");
+                const result = await response.json();
+
+                document.getElementById('essay-score-badge').innerText = result.score + "/10";
+                document.getElementById('essay-feedback').innerText = result.feedback;
+                document.getElementById('essay-suggestion').innerText = result.suggestion;
+                document.getElementById('essay-result-area').classList.remove('d-none');
+                document.getElementById('essay-result-area').scrollIntoView({ behavior: 'smooth' });
+
+            } catch (e) { alert("Lỗi: " + e.message); }
+            finally { btn.innerHTML = originalText; btn.disabled = false; }
+        }
+    </script>
+    <script type="module">
+        import Vapi from "https://esm.sh/@vapi-ai/web";
+        const vapi = new Vapi('0b0c37f4-1f4c-4b23-acff-c5a121a9720c'); // Public Key
+
+        const btnStart = document.getElementById("startTutor");
+        const btnStop = document.getElementById("stopTutor");
+        const statusText = document.getElementById("voice-status-text");
+        const micIcon = document.getElementById("mic-icon");
+        const transcriptBox = document.getElementById("transcript-box");
+
+        // UI Helpers
+        function setVoiceState(state) {
+            if (state === 'connecting') {
+                statusText.innerText = "Đang kết nối...";
+                btnStart.disabled = true;
+                micIcon.classList.add("fa-spin");
+            } else if (state === 'active') {
+                statusText.innerText = "Đang nghe...";
+                btnStart.classList.add('d-none');
+                btnStop.classList.remove('d-none');
+                btnStop.disabled = false;
+                micIcon.classList.remove("fa-spin");
+                micIcon.classList.add("text-danger", "animate__animated", "animate__pulse", "animate__infinite");
+                transcriptBox.classList.remove('d-none');
+            } else {
+                statusText.innerText = "Sẵn sàng luyện nói";
+                btnStart.classList.remove('d-none');
+                btnStop.classList.add('d-none');
+                btnStart.disabled = false;
+                micIcon.classList.remove("fa-spin", "text-danger", "animate__animated", "animate__pulse", "animate__infinite");
+                micIcon.classList.add("text-primary");
+            }
+        }
+
+        // Logic
+        if (btnStart) {
+            btnStart.onclick = async () => {
+                setVoiceState('connecting');
+                try {
+                    console.log("Starting Vapi with context length:", uploadedDocumentContext ? uploadedDocumentContext.length : 0);
+                    await vapi.start("39f8a27a-d6ac-41a0-aa7b-270fa15ce764", {
+                        variableValues: {
+                            lesson_content: uploadedDocumentContext || "Bạn là gia sư AI. Người dùng chưa upload tài liệu nào, hãy nhắc họ upload."
+                        }
+                    });
+                    setVoiceState('active');
+                } catch (e) {
+                    console.error(e);
+                    alert("Lỗi kết nối Vapi: " + e.message);
+                    setVoiceState('inactive');
+                }
+            };
+        }
+
+        if (btnStop) {
+            btnStop.onclick = () => {
+                vapi.stop();
+                setVoiceState('inactive');
+            }
+        }
+
+        // Vapi Events
+        let currentBubble = null;
+        let currentRole = null;
+
+        vapi.on("message", (msg) => {
+            if (msg.type === "transcript" && msg.transcript) {
+                // Determine if we need a new bubble
+                // New bubble if: role changed OR previous message was final/done
+                // Note: Vapi SDK usually sends partial updates then a final one. 
+
+                // Simple heuristic: If role changed, definitely new bubble.
+                if (msg.role !== currentRole) {
+                    currentRole = msg.role;
+                    currentBubble = null;
+                }
+
+                if (!currentBubble) {
+                    currentBubble = document.createElement("div");
+                    currentBubble.className = `mb-2 p-2 rounded ${msg.role === 'assistant' ? 'bg-white border' : 'bg-primary text-white text-end'}`;
+                    currentBubble.style.alignSelf = msg.role === 'assistant' ? 'flex-start' : 'flex-end';
+                    currentBubble.style.maxWidth = "80%";
+                    transcriptBox.appendChild(currentBubble);
+                }
+
+                // Update text
+                currentBubble.innerText = msg.transcript;
+                transcriptBox.scrollTop = transcriptBox.scrollHeight;
+
+                // If this is a final transcript, reset bubble tracker so next one starts fresh (if needed)
+                // However, usually 'final' just means this sentence is done. 
+                // We'll keep appending to the same bubble if the role stays same, 
+                // UNLESS we want to separate sentences. 
+                // For a chat interface, usually one block per turn is good.
+                // But if Vapi sends accumulated text for the whole turn, just updating innerText is fine.
+                // If Vapi sends sentence-by-sentence, we might be overwriting previous sentences if we aren't careful.
+
+                // If msg.transcriptType === 'final', we might want to "commit" this text. 
+                // But Vapi often sends the cumulative transcript for the "step". 
+                // Let's stick to updating innerText for now as it solves the "fragmented bubbles" issue.
+                // The user reported: "Xin", then "Xin chào" in separate bubbles. 
+                // This means previous code appended NEW divs for partials. 
+                // By reusing `currentBubble`, we solve that.
+
+                if (msg.transcriptType === 'final') {
+                    currentBubble = null; // Force new bubble for next sentence/turn
+                }
+            }
+        });
+
+        vapi.on("call-end", () => setVoiceState('inactive'));
+        vapi.on("error", (e) => { console.error(e); setVoiceState('inactive'); });
+
+    </script>
+</body>
+
+</html>

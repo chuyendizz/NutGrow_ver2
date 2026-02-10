@@ -1,0 +1,145 @@
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 24px;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  margin-bottom: 24px;
+  color: #2c3e50;
+}
+
+/* GRID 3 CỘT */
+.document-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* CARD */
+.document-card {
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.document-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* HEADER */
+.doc-header {
+  height: 120px;
+  background: linear-gradient(135deg, #e74c3c, #f39c12);
+  color: #fff;
+  border-radius: 14px 14px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+}
+
+/* BODY */
+.doc-body {
+  padding: 16px;
+  flex: 1;
+}
+
+.doc-body h3 {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.doc-summary {
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* FOOTER */
+.doc-footer {
+  padding: 16px;
+  border-top: 1px solid #eee;
+  text-align: right;
+}
+
+.btn-view {
+  background: #3498db;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background 0.2s ease;
+}
+
+.btn-view:hover {
+  background: #217dbb;
+}
+
+/* EMPTY */
+.empty-text {
+  text-align: center;
+  margin-top: 40px;
+  color: #999;
+  font-size: 1.1rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+  .document-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .document-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.search-box {
+  position: relative;
+  max-width: 400px;
+  margin: 20px 0 30px;
+}
+
+.search-box i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 10px 12px 10px 36px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.search-box input:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.15);
+}
+.doc-title a {
+    text-decoration: none;
+    color: #2c3e50;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.doc-title a:hover {
+    color: #4CAF50;
+    text-decoration: underline;
+}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en-US" xmlns:th="www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+</head>
+<th:block th:replace="layout/user-layout :: layout">
+    <th:block th:fragment="pageContent">
+            <section class="section bg-gray">
+            <div class="container">
+                <div class="row justify-content-center">
+                <div class="col-lg-6">
+
+                    <h2 class="section-title text-center mb-4">ĐỔI MẬT KHẨU</h2>
+
+                    <!-- ERROR -->
+                    <div th:if="${error}" class="alert alert-danger">
+                        <span th:text="${error}"></span>
+                    </div>
+
+                    <!-- SUCCESS -->
+                    <div th:if="${mess}" class="alert alert-success">
+                        <span th:text="${mess}"></span>
+                    </div>
+
+                    <form th:action="@{/change-password}" method="post"
+                        id="changePassForm"
+                        class="bg-white p-4 rounded shadow">
+
+                    <div id="jsError" class="alert alert-danger d-none">
+                        Mật khẩu mới nhập lại không khớp!
+                    </div>
+
+                    <div class="form-group">
+                        <input type="password"
+                                name="oldPassword"
+                                class="form-control mb-3"
+                                placeholder="Mật khẩu hiện tại"
+                                required>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="password"
+                                id="password"
+                                name="password"
+                                class="form-control mb-3"
+                                placeholder="Mật khẩu mới"
+                                required>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="password"
+                                id="rePassword"
+                                class="form-control mb-3"
+                                placeholder="Nhập lại mật khẩu mới"
+                                required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        CẬP NHẬT MẬT KHẨU
+                    </button>
+                    </form>
+
+                </div>
+                </div>
+            </div>
+            </section>
+
+    </th:block>
+</th:block>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.getElementById("changePassForm");
+        if (form) {
+            form.addEventListener("submit", function (e) {
+                const pass = document.getElementById("password").value;
+                const rePass = document.getElementById("rePassword").value;
+                const error = document.getElementById("jsError");
+
+                if (error) { 
+                    if (pass !== rePass) {
+                        e.preventDefault();
+                        error.classList.remove("d-none");
+                    } else {
+                        error.classList.add("d-none");
+                    }
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

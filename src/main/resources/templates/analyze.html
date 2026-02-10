@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUIZ AI NUTGROW</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/assets/css/api.css}">
+    <script type="importmap">
+      {
+        "imports": {
+          "@vapi-ai/web": "https://esm.sh/@vapi-ai/web"
+        }
+      }
+    </script>
+
+    <style>
+        .custom-card {
+            background-color: #2e3856;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            color: white;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            border: none;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .custom-card:hover {
+            background-color: #3e4a6d;
+            transform: translateY(-5px);
+        }
+
+        .icon-box {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #4255ff;
+        }
+
+        .card-text {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <th:block th:replace="layout/user-layout :: layout">
+        <th:block th:fragment="pageContent">
+            <div class="container">
+                <div class="card">
+                    <h2><i class="fas fa-upload"></i> Upload tài liệu học tập (PDF)</h2>
+
+                    <input type="file" id="fileInput" accept=".pdf" style="display: none;">
+
+                    <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Click để chọn file PDF</p>
+                        <p style="font-size: 0.9rem; color: #999;">
+                            Tài liệu học tập, giáo trình, slide bài giảng
+                        </p>
+                    </div>
+
+                    <div id="filesList" class="files-list"></div>
+                </div>
+
+                <div class="card" style="text-align: center;">
+                    <button id="analyzeBtn" class="btn btn-primary" disabled>
+                        <i class="fas fa-magic"></i> Phân tích tài liệu
+                    </button>
+                </div>
+
+                <!-- Results -->
+                <div id="resultsContainer"></div>
+
+                <div class="container hidden" id="actionSection">
+                    <div class="row g-4 justify-content-center">
+                        <div class="col-6 col-md-6">
+                            <a href="javascript:void(0)" class="custom-card" id="learnBtn">
+                                <div class="icon-box">
+                                    <i class="fa-solid fa-circle-notch"></i>
+                                </div>
+                                <p class="card-text">Learn</p>
+                            </a>
+                        </div>
+
+                        <div class="col-6 col-md-6">
+                            <a href="javascript:void(0)" class="custom-card" id="testBtn">
+                                <div class="icon-box">
+                                    <i class="fa-solid fa-file-lines"></i>
+                                </div>
+                                <p class="card-text">Test</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="learnSection" class="hidden">
+                    <div id="tutorControls" class="tutor-controls hidden">
+                        <button id="startTutor" class="call-btn call-start">
+                            <i class="fas fa-phone"></i>
+                        </button>
+
+                        <button id="stopTutor" class="call-btn call-stop hidden">
+                            <i class="fas fa-phone-slash"></i>
+                        </button>
+                    </div>
+                    <div id="transcriptContainer" class="transcript-container hidden">
+                        <div class="transcript-header">
+                            <h3><i class="fas fa-comments"></i> Tutor Transcript</h3>
+
+                            <button id="clearTranscript" class="btn-clear">
+                                <i class="fas fa-trash"></i> Clear
+                            </button>
+                        </div>
+
+                        <div id="transcriptContent" class="transcript-content"></div>
+                    </div>
+                </div>
+
+
+                <div id="testSection" class="hidden">
+                    <button id="generateQuizBtn">Tạo Quiz</button>
+                    <div id="quizContainer"></div>
+                    <div id="quizResult"></div>
+                </div>
+
+                <div id="saveDocumentBox" class="card mt-3" style="text-align:center; display:none;">
+                    <button id="saveDocumentBtn" class="btn btn-success">
+                        <i class="fas fa-save"></i> Lưu tài liệu
+                    </button>
+                </div>
+            </div>
+        </th:block>
+    </th:block>
+
+    <script>
+        let uploadedFile = null;
+        const fileInput = document.getElementById('fileInput');
+        const filesList = document.getElementById('filesList');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const generateQuizBtn = document.getElementById('generateQuizBtn');
+        let documentContext = "";
+        let analysisResult = null;
+        let quizResult = null;
+
+    </script>
+
+    <script>
+        fileInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+
+            if (!file) return;
+
+            if (!file.name.toLowerCase().endsWith('.pdf')) {
+                alert('Chỉ chấp nhận file PDF');
+                return;
+            }
+
+            uploadedFile = file;
+            analyzeBtn.disabled = false;
+
+            filesList.innerHTML = `
+            <div class="file-item">
+                <div class="file-info">
+                    <i class="fas fa-file-pdf file-icon"></i>
+                    <div>
+                        <strong>${file.name}</strong>
+                        <div style="font-size: 0.9rem; color: #666;">
+                            ${(file.size / 1024).toFixed(2)} KB
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        });
+
+
+        function removeFile(id) {
+            uploadedFiles = uploadedFiles.filter(f => f.id !== parseFloat(id));
+            renderFilesList();
+            updateButtonState();
+        }
+
+        analyzeBtn.addEventListener('click', async function () {
+            if (!uploadedFile) return;
+
+            analyzeBtn.disabled = true;
+            analyzeBtn.innerHTML = '<div class="spinner"></div> Đang phân tích...';
+
+            resultsContainer.innerHTML = `
+            <div class="card loading">
+                <div class="spinner"></div>
+                <p>AI đang đọc và tóm tắt tài liệu...</p>
+            </div>
+        `;
+
+            try {
+                const formData = new FormData();
+                formData.append('file', uploadedFile);
+
+                const uploadRes = await fetch('/api/study/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const uploadData = await uploadRes.json();
+                const fileId = uploadData.fileId;
+
+                const analyzeRes = await fetch('/api/study/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fileId })
+                });
+
+                const result = await analyzeRes.json();
+                analysisResult = result;
+                displayResult(result);
+
+            } catch (err) {
+                resultsContainer.innerHTML = `
+                <div class="card">
+                    <div class="alert alert-danger">
+                        Lỗi phân tích: ${err.message}
+                    </div>
+                </div>
+            `;
+            }
+        });
+
+        function displayResult(result) {
+            const resultsContainer = document.getElementById('resultsContainer');
+
+            documentContext = `Tóm tắt tài liệu: ${result.summary}\n\n`;
+            if (result.parts) {
+                result.parts.forEach(p => {
+                    documentContext += `Phần ${p.title}: ${p.content}\n`;
+                });
+            }
+
+            let htmlContent = `
+            <div class="card">
+                <h2><i class="fas fa-book"></i> Kết quả phân tích tài liệu</h2>
+
+                <div class="summary-box">
+                    <h3>Tóm tắt chi tiết</h3>
+                    <p>${result.summary}</p>
+                </div>
+        `;
+
+            if (result.parts && result.parts.length > 0) {
+                htmlContent += `<div class="parts-box">`;
+                result.parts.forEach((part, index) => {
+                    htmlContent += `
+                    <h3>${part.title}</h3>
+                    <p>${part.content.replace(/\n/g, "<br>")}</p>
+                `;
+                });
+                htmlContent += `</div>`;
+            }
+
+            htmlContent += `</div>`;
+
+            resultsContainer.innerHTML = htmlContent;
+            showTutorControls();
+            document.getElementById('actionSection').classList.remove('hidden');
+        }
+
+
+        generateQuizBtn.addEventListener('click', async () => {
+            generateQuizBtn.disabled = true;
+
+            const res = await fetch('/api/study/quiz', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const quiz = await res.json();
+            quizResult = quiz;
+
+            displayQuiz(quiz);
+
+            document.getElementById('saveDocumentBox').style.display = 'block';
+        });
+
+        document.getElementById('saveDocumentBtn').addEventListener('click', async () => {
+            try {
+                const res = await fetch('/api/study/save', {
+                    method: 'POST'
+                });
+
+                if (!res.ok) throw new Error("Lưu thất bại");
+
+                alert("Lưu tài liệu thành công!");
+            } catch (e) {
+                alert("Lỗi lưu tài liệu");
+                console.error(e);
+            }
+        });
+
+
+        function displayQuiz(quiz) {
+            const container = document.getElementById('quizContainer');
+            let html = '';
+
+            quiz.questions.forEach((q, index) => {
+                html += `<div class="quiz-question">
+                        <h4>Câu ${index + 1}: ${q.question}</h4>
+                        <ul>`;
+                q.options.forEach((opt, i) => {
+                    html += `<li><input type="radio" name="q${index}" value="${i}"> ${opt}</li>`;
+                });
+                html += `</ul></div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+    </script>
+
+    <script>
+        let quizData = [];
+        let currentPage = 0;
+        const QUESTIONS_PER_PAGE = 3;
+        let userAnswers = {};
+
+        function displayQuiz(quiz) {
+            quizData = quiz.questions;
+            currentPage = 0;
+            renderQuizPage();
+        }
+
+        function renderQuizPage() {
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
+
+            const start = currentPage * QUESTIONS_PER_PAGE;
+            const end = start + QUESTIONS_PER_PAGE;
+            const pageQuestions = quizData.slice(start, end);
+
+            pageQuestions.forEach((q, index) => {
+                const questionIndex = start + index;
+
+                container.innerHTML += `
+                <div class="quiz-question">
+                    <h4>Câu ${questionIndex + 1}: ${q.question}</h4>
+                    <ul>
+                        ${q.options.map((opt, i) => `
+                            <li>
+                                <label>
+                                    <input type="radio"
+                                        name="q${questionIndex}"
+                                        value="${i}"
+                                        ${userAnswers[questionIndex] === i ? 'checked' : ''}
+                                        onchange="saveAnswer(${questionIndex}, ${i})">
+                                    ${opt}
+                                </label>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+            });
+
+            container.innerHTML += `
+            <div class="quiz-pagination">
+                <button onclick="prevPage()" ${currentPage === 0 ? 'disabled' : ''}>
+                    ⬅ Trước
+                </button>
+
+                <span>Trang ${currentPage + 1} / ${Math.ceil(quizData.length / QUESTIONS_PER_PAGE)}</span>
+
+                <button onclick="nextPage()" ${end >= quizData.length ? 'disabled' : ''}>
+                    Sau ➡
+                </button>
+            </div>
+
+            ${end >= quizData.length ? `
+                <button class="btn btn-primary mt-3" onclick="submitQuiz()">
+                    Nộp bài
+                </button>
+            ` : ''}
+        `;
+        }
+
+        function saveAnswer(questionIndex, optionIndex) {
+            userAnswers[questionIndex] = optionIndex;
+        }
+
+
+        function submitQuiz() {
+            let correct = 0;
+
+            quizData.forEach((q, index) => {
+                if (userAnswers[index] === q.answer) {
+                    correct++;
+                }
+            });
+
+            const total = quizData.length;
+            const score = Math.round((correct / total) * 100);
+
+            showResult(correct, total, score);
+        }
+
+
+        function nextPage() {
+            currentPage++;
+            renderQuizPage();
+        }
+
+        function prevPage() {
+            currentPage--;
+            renderQuizPage();
+        }
+
+        function showResult(correct, total, score) {
+            let level = "";
+            let comment = "";
+
+            if (score >= 85) {
+                level = "Xuất sắc";
+                comment = "Bạn nắm rất chắc kiến thức tài liệu.";
+            } else if (score >= 65) {
+                level = "Khá";
+                comment = "Hiểu tốt, nên ôn lại vài phần.";
+            } else if (score >= 40) {
+                level = "Trung bình";
+                comment = "Cần đọc lại tài liệu kỹ hơn.";
+            } else {
+                level = "Yếu";
+                comment = "Bạn nên học lại từ đầu.";
+            }
+
+            document.getElementById('quizResult').innerHTML = `
+            <div class="card mt-4">
+                <h3>Kết quả làm bài</h3>
+                <p>1. Đúng: <strong>${correct}/${total}</strong></p>
+                <p>2. Điểm: <strong>${score}%</strong></p>
+                <p>3. Đánh giá: <strong>${level}</strong></p>
+                <p>${comment}</p>
+            </div>
+        `;
+        }
+
+    </script>
+    <script>
+        const tutorControls = document.getElementById('tutorControls');
+        const startTutorBtn = document.getElementById('startTutor');
+        const stopTutorBtn = document.getElementById('stopTutor');
+
+        function showTutorControls() {
+            tutorControls.classList.remove('hidden');
+            startTutorBtn.classList.remove('hidden');
+            stopTutorBtn.classList.add('hidden');
+        }
+
+        function startTutor() {
+            startTutorBtn.classList.add('hidden');
+            stopTutorBtn.classList.remove('hidden');
+
+            transcriptContainer.classList.remove('hidden');
+
+            console.log("Tutor started");
+        }
+
+
+        function stopTutor() {
+            stopTutorBtn.classList.add('hidden');
+            startTutorBtn.classList.remove('hidden');
+
+            addTranscript("Buổi học kết thúc. Hẹn gặp lại!", "ai");
+
+            console.log("Tutor stopped");
+        }
+
+
+        startTutorBtn.addEventListener('click', startTutor);
+        stopTutorBtn.addEventListener('click', stopTutor);
+    </script>
+    <script>
+        const transcriptContainer = document.getElementById('transcriptContainer');
+        const transcriptContent = document.getElementById('transcriptContent');
+
+        function addTranscript(text, role = 'ai') {
+            const msg = document.createElement('div');
+            msg.classList.add(
+                'transcript-msg',
+                role === 'user' ? 'transcript-user' : 'transcript-ai'
+            );
+
+            const time = new Date().toLocaleTimeString();
+
+            msg.innerHTML = `
+            <div>${text}</div>
+            <div class="transcript-time">${time}</div>
+        `;
+
+            transcriptContent.appendChild(msg);
+            transcriptContent.scrollTop = transcriptContent.scrollHeight;
+        }
+    </script>
+
+    <script>
+        const clearTranscriptBtn = document.getElementById('clearTranscript');
+
+        function clearTranscript() {
+            transcriptContent.innerHTML = "";
+
+            currentBubble = null;
+            currentRole = null;
+            lastTranscript = "";
+
+            console.log("Transcript cleared");
+        }
+
+        clearTranscriptBtn.addEventListener('click', clearTranscript);
+    </script>
+
+
+    <script type="module" th:src="@{/assets/js/index.js}"></script>
+
+    <script>
+        const learnBtn = document.getElementById('learnBtn');
+        const testBtn = document.getElementById('testBtn');
+
+        const learnSection = document.getElementById('learnSection');
+        const testSection = document.getElementById('testSection');
+
+        function showLearn() {
+            learnSection.classList.remove('hidden');
+            testSection.classList.add('hidden');
+
+            showTutorControls(); 
+        }
+
+        function showTest() {
+            testSection.classList.remove('hidden');
+            learnSection.classList.add('hidden');
+
+            renderPage(); 
+        }
+
+        learnBtn.addEventListener('click', showLearn);
+        testBtn.addEventListener('click', showTest);
+    </script>
+
+
+</body>
+
+</html>

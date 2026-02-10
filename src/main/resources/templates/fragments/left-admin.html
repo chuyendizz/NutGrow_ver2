@@ -1,0 +1,41 @@
+<th:block th:fragment="left" xmlns:th="http://www.w3.org/1999/xhtml">
+    <div class="left-side-bar">
+        <div class="brand-logo">
+            <a th:href="@{/admin/dashboard}">
+                <img th:src="@{/image/logo.png}" alt="" class="dark-logo" />
+                <img th:src="@{/image/logo.png}" alt="" class="light-logo" />
+            </a>
+            <div class="close-sidebar" data-toggle="left-sidebar-close">
+                <i class="ion-close-round"></i>
+            </div>
+        </div>
+        <div class="menu-block customscroll">
+            <div class="sidebar-menu">
+                <ul id="accordion-menu">
+                    <li>
+                        <a th:href="@{/admin/dashboard}" class="dropdown-toggle no-arrow">
+                            <span class="micon fa fa-home"></span><span class="mtext">Trang chủ</span>
+                        </a>
+                    </li>
+
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <span class="micon bi bi-person-fill"></span><span class="mtext">Tài khoản</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a th:href="@{/admin/user}">Danh sách</a></li>
+                            <li><a th:href="@{/admin/user/add}">Thêm</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a th:href="@{/admin/orders}" class="dropdown-toggle no-arrow">
+                            <span class="micon bi bi-credit-card"></span><span class="mtext">Đơn hàng</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</th:block>

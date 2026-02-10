@@ -1,0 +1,155 @@
+/* ====== Card ====== */
+.card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.card h2 {
+  font-size: 1.3rem;
+  margin-bottom: 16px;
+  color: #2f5d2f;
+}
+
+.card h2 i {
+  margin-right: 8px;
+  color: #4caf50;
+}
+
+/* ====== Upload zone ====== */
+.upload-zone {
+  border: 2px dashed #88E788;
+  border-radius: 12px;
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  background: #f7fff7;
+}
+
+.upload-zone i {
+  font-size: 2.5rem;
+  color: #4caf50;
+  margin-bottom: 12px;
+}
+
+.upload-zone p {
+  margin: 4px 0;
+  color: #333;
+}
+
+.upload-zone:hover {
+  background: #eaffea;
+  transform: translateY(-2px);
+}
+
+/* ====== File list ====== */
+.files-list {
+  margin-top: 16px;
+}
+
+.file-item {
+  background: #f5f5f5;
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.file-icon {
+  font-size: 1.8rem;
+  color: #e53935;
+}
+
+/* ====== Button ====== */
+.btn-primary {
+  background-color: #4caf50;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.btn-primary:disabled {
+  background: #bdbdbd;
+}
+
+/* ====== Loading ====== */
+.loading {
+  text-align: center;
+  color: #555;
+}
+
+/* ====== Result ====== */
+.summary-box,
+.parts-box {
+  margin-top: 16px;
+}
+
+.summary-box h3,
+.parts-box h3 {
+  color: #2e7d32;
+  margin-bottom: 8px;
+}
+
+.summary-box p,
+.parts-box p {
+  line-height: 1.6;
+  color: #333;
+}
+
+/* ====== Quiz ====== */
+#generateQuizBtn {
+  margin: 16px auto;
+  display: block;
+  padding: 10px 26px;
+  border-radius: 999px;
+  border: none;
+  background: #ff9800;
+  color: white;
+  font-weight: 600;
+}
+
+.quiz-question {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.quiz-question h4 {
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.quiz-question ul {
+  list-style: none;
+  padding: 0;
+}
+
+.quiz-question li {
+  margin-bottom: 8px;
+}
+
+/* ====== Pagination ====== */
+.quiz-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.quiz-pagination button {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #88E788;
+  font-weight: 600;
+}

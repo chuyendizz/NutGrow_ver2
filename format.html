@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en-US" xmlns:th="www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" th:href="@{/assets/css/custom.css}">
+</head>
+<th:block th:replace="layout/user-layout :: layout">
+    <th:block th:fragment="pageContent">
+
+        <div class="container py-5">
+            <div class="row g-4 justify-content-center">
+
+                <!-- PRO PACKAGE -->
+                <div class="col-md-4">
+                    <div class="card pricing-card shadow-sm h-100">
+                        <div class="card-body d-flex flex-column text-center">
+                            <h5 class="text-muted mb-2">Package</h5>
+                            <h2 class="fw-bold mb-3">Pro</h2>
+
+                            <p class="price-text mb-1">59.000 VND</p>
+                            <p class="text-muted mb-4">/month</p>
+
+                            <ul class="list-unstyled text-start flex-grow-1">
+                                <li class="mb-2">✔ Upload file ≤ 10MB</li>
+                                <li class="mb-2">✔ Basic generate quiz</li>
+                                <li class="mb-2">✔ Virtual Q&A (oral AI ≤ 2p/file)</li>
+                                <li class="mb-2">✔ Scoring & report strengths/weaknesses</li>
+                            </ul>
+
+                            <button class="btn btn-purple mt-3 w-100">
+                                Get Started
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PREMIUM PACKAGE -->
+                <div class="col-md-4">
+                    <div class="card pricing-card shadow-sm h-100 border border-2 border-warning position-relative">
+                        <div class="card-body d-flex flex-column text-center">
+                            <i class="fa-solid fa-crown crown-icon mb-2"></i>
+
+                            <h5 class="text-muted mb-2">Package</h5>
+                            <h2 class="fw-bold mb-3">Premium</h2>
+
+                            <p class="price-text mb-1">99.000 VND</p>
+                            <p class="text-muted mb-4">/month</p>
+
+                            <ul class="list-unstyled text-start flex-grow-1">
+                                <li class="mb-2">✔ Unlimited upload file size</li>
+                                <li class="mb-2">✔ Advanced generate quiz</li>
+                                <li class="mb-2">✔ Advanced Virtual Q&A (oral AI)</li>
+                                <li class="mb-2">✔ Scoring & detailed report</li>
+                            </ul>
+
+                            <button class="btn btn-purple mt-3 w-100">
+                                Upgrade Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </th:block>
+</th:block>
+</body>
+
+</html>
